@@ -4,7 +4,7 @@
 InfoReader::InfoReader(QWidget *parent): QWidget(parent)
 {
     qApp->setStyle(QStyleFactory::create("Fusion"));
-    setMinimumSize(500, 300);
+    setMinimumSize(600, 300);
     setWindowTitle("Image Reader");
 
     tableWidget = new QTableWidget(this);
@@ -31,12 +31,13 @@ InfoReader::InfoReader(QWidget *parent): QWidget(parent)
     connect(pickFiles, &QPushButton::clicked, this, &InfoReader::getFiles);
 
 
-    tableWidget->setColumnCount(5);
+    tableWidget->setColumnCount(6);
     tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Name"));
     tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Extension"));
     tableWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("Size (bits)"));
-    tableWidget->setHorizontalHeaderItem(3,new QTableWidgetItem("Resolution"));
+    tableWidget->setHorizontalHeaderItem(3,new QTableWidgetItem("Size (pixels)"));
     tableWidget->setHorizontalHeaderItem(4,new QTableWidgetItem("Deepth"));
+    tableWidget->setHorizontalHeaderItem(5, new QTableWidgetItem("Resolution (dpi)"));
 
 
     currentPath = "D:/";
@@ -59,6 +60,20 @@ void InfoReader::readAndSetInfo(QFileInfo fileInfo)
     tableWidget->setItem(tableWidget->rowCount() - 1, 2, item);
     tableWidget->setItem(tableWidget->rowCount() - 1, 3, new QTableWidgetItem(resolution));
     tableWidget->setItem(tableWidget->rowCount() - 1, 4, new QTableWidgetItem(QVariant(image.bitPlaneCount()).toString()));
+
+    item = new QTableWidgetItem();
+    item->setData(Qt::DisplayRole, round(image.dotsPerMeterX()/39.37));
+    tableWidget->setItem(tableWidget->rowCount() - 1, 5, item);
+
+
+    //#include <gdiplusheaders.h>
+//    item = new QTableWidgetItem();
+//    std::wstring fileName = std::wstring(fileInfo.fileName().begin(), fileInfo.fileName().end());
+//    const WCHAR *newFileName = fileName.c_str();
+//    Image *img = Image::FromFile(newFileName);
+//    item->setData(Qt::DisplayRole, img->GetHorizontalResolution()/*int(image.dotsPerMeterX() / 39.37)*/);
+//    tableWidget->setItem(tableWidget->rowCount() - 1, 4, item);
+//    tableWidget->setItem(tableWidget->rowCount() - 1, 5, new QTableWidgetItem(QVariant(image.bitPlaneCount()).toString()));
 }
 
 void InfoReader::getFiles()
